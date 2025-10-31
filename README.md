@@ -2,6 +2,7 @@
 
 A simple yet stylish **React Native Grocery App** built to demonstrate my mobile development skills.  
 The app offers a clean shopping experience — users can browse groceries, filter by category, add items to their cart or favorites, and view product details.  
+![image_alt](https://github.com/Jabweli/react-native-grocery-app/blob/6fc8a69dd2789b807f72d6eee025b2d673a7dd43/Screenshot_1761890817.png)
 
 
 ## 🌟 About the Project
