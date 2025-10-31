@@ -1,57 +1,64 @@
 import { products } from "@/constants";
-import { createContext, useState } from "react";
+import React, { createContext, useRef, useState } from "react";
+import { FlatList, ToastAndroid } from "react-native";
 
 type Product = {
-  id: number,
-  name:string,
-  price:string,
-  category:string,
-  stars:string,
-  image: any,
-  desc: string,
-  isFavorite: boolean
-}
+  id: number;
+  name: string;
+  price: string;
+  category: string;
+  stars: string;
+  image: any;
+  desc: string;
+  isFavorite: boolean;
+};
 
 const AppContext = createContext({
   data: [],
   // isError: "",
   cart: [],
-  setCart: (product:any) => {},
+  setCart: (product: any) => {},
   addToCart: (product: any) => {},
   removeFromCart: (productId: number) => {},
-  refreshData:() =>{},
+  refreshData: () => {},
   clearCart: () => {},
   activeCategory: "",
-  setActiveCategory: (name:string) => {},
+  setActiveCategory: (name: string) => {},
   favorites: [],
-  setFavorites: (product:any) => {},
+  setFavorites: (product: any) => {},
   addToFavorites: (product: any) => {},
+  listRef: { current: null },
+  searchText: "",
+  setSearchText: (text: string) => {},
 });
 
-export const AppProvider = ({children}: {children: React.ReactNode}) => {
+export const AppProvider = ({ children }: { children: React.ReactNode }) => {
   const [data, setData] = useState<any>(products);
   const [categories, setCategories] = useState([]);
   const [activeCategory, setActiveCategory] = useState<string>("All");
   const [cart, setCart] = useState([]);
   const [favorites, setFavorites] = useState<any>([]);
+  const listRef: any = useRef<FlatList<any>>(null);
+  const [searchText, setSearchText] = useState<string>("");
 
-  const addToCart = (product:any) => {
-    const existingProductIndex = cart.findIndex((item:any) => item.id === product.id);
-    if(existingProductIndex !== -1){
-      const updatedCart:any = cart.map((item:any, index) =>
+  const addToCart = (product: any) => {
+    const existingProductIndex = cart.findIndex(
+      (item: any) => item.id === product.id
+    );
+    if (existingProductIndex !== -1) {
+      const updatedCart: any = cart.map((item: any, index) =>
         index === existingProductIndex
           ? { ...item, quantity: item.quantity + 1 }
           : item
       );
       setCart(updatedCart);
-    }else {
-      const updatedCart:any = [...cart, { ...product, quantity: 1 }];
+    } else {
+      const updatedCart: any = [...cart, { ...product, quantity: 1 }];
       setCart(updatedCart);
     }
-  }
+  };
 
-
-  const addToFavorites = (product:any) => {
+  const addToFavorites = (product: any) => {
     // Toggle favorite in data
     const updatedData = data.map((item: any) =>
       item.id === product.id ? { ...item, isFavorite: !item.isFavorite } : item
@@ -63,13 +70,23 @@ export const AppProvider = ({children}: {children: React.ReactNode}) => {
 
     if (exists) {
       setFavorites(favorites.filter((item: any) => item.id !== product.id));
+      ToastAndroid.showWithGravity(
+        "Removed from favorites list",
+        ToastAndroid.SHORT,
+        ToastAndroid.CENTER
+      );
     } else {
       setFavorites([...favorites, { ...product, isFavorite: true }]);
+      ToastAndroid.showWithGravity(
+        "Added to favorites list",
+        ToastAndroid.SHORT,
+        ToastAndroid.CENTER
+      );
     }
-  }
+  };
 
-  const removeFromCart = (productId:number) => {
-    const updatedCart = cart.filter((item:any) => item.id !== productId);
+  const removeFromCart = (productId: number) => {
+    const updatedCart = cart.filter((item: any) => item.id !== productId);
     setCart(updatedCart);
   };
 
@@ -84,16 +101,33 @@ export const AppProvider = ({children}: {children: React.ReactNode}) => {
     // }
   };
 
-  const clearCart =() =>{
+  const clearCart = () => {
     setCart([]);
-  }
+  };
 
   return (
-    <AppContext.Provider value={{data, cart, setCart, addToCart, removeFromCart, clearCart, refreshData, activeCategory, setActiveCategory, favorites, setFavorites, addToFavorites}}>
+    <AppContext.Provider
+      value={{
+        data,
+        cart,
+        setCart,
+        addToCart,
+        removeFromCart,
+        clearCart,
+        refreshData,
+        activeCategory,
+        setActiveCategory,
+        favorites,
+        setFavorites,
+        addToFavorites,
+        listRef,
+        searchText,
+        setSearchText,
+      }}
+    >
       {children}
     </AppContext.Provider>
-  )
-
-}
+  );
+};
 
 export default AppContext;

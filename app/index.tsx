@@ -7,7 +7,7 @@ export default function Index() {
   const router = useRouter();
   return (
     <SafeAreaView className="flex-1 justify-center px-6 bg-[#f6f6f6]">
-      <View className="flex-1dd w-full h-1/2 mt-20">
+      <View className="w-full h-1/2 mt-20">
         <Image
           source={images.grocery}
           resizeMode="contain"

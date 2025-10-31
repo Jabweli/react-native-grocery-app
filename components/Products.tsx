@@ -1,51 +1,66 @@
-import AppContext from '@/context/Context';
-import FontAwesome6 from '@expo/vector-icons/FontAwesome6';
-import { router } from 'expo-router';
-import React, { useContext, useEffect, useState } from 'react';
-import { Dimensions, FlatList, Image, Text, TouchableOpacity, View } from 'react-native';
-import { HeartIcon } from 'react-native-heroicons/solid';
+import AppContext from "@/context/Context";
+import FontAwesome6 from "@expo/vector-icons/FontAwesome6";
+import { router } from "expo-router";
+import React, { useContext, useEffect, useState } from "react";
+import {
+  Dimensions,
+  FlatList,
+  Image,
+  Text,
+  ToastAndroid,
+  TouchableOpacity,
+  View,
+} from "react-native";
+import { HeartIcon } from "react-native-heroicons/solid";
 
 const { width: ScreenWidth } = Dimensions.get("window");
 
 type Product = {
-  id: number,
-  name:string,
-  price:string,
-  category:string,
-  stars:string,
-  image: any,
-  desc: string,
-  isFavorite: boolean
-}
+  id: number;
+  name: string;
+  price: string;
+  category: string;
+  stars: string;
+  image: any;
+  desc: string;
+  isFavorite: boolean;
+};
 
 export default function Products() {
-
-  const {data, addToCart, addToFavorites, activeCategory} = useContext(AppContext);
+  const { data, addToCart, addToFavorites, activeCategory, listRef } =
+    useContext(AppContext);
   const [filteredProducts, setFilteredProducts] = useState<Product[]>([]);
 
   useEffect(() => {
-    const filtered = activeCategory && activeCategory != "All"
-    ? data.filter((product:any) => product.category == activeCategory)
-    : data;
+    const filtered =
+      activeCategory && activeCategory != "All"
+        ? data.filter((product: any) => product.category == activeCategory)
+        : data;
 
     setFilteredProducts(filtered);
-  }, [activeCategory, data])
-  
-  const handleAddToCart = (product:any) => {
-    addToCart(product);
-    alert("Product added to cart");
-  }
+  }, [activeCategory, data]);
 
-  const handleFavorite = (product:any) => {
+  const handleAddToCart = (product: any) => {
+    addToCart(product);
+    ToastAndroid.showWithGravity(
+      "Product added to cart",
+      ToastAndroid.SHORT,
+      ToastAndroid.CENTER
+    );
+    // alert("Product added to cart");
+  };
+
+  const handleFavorite = (product: any) => {
     addToFavorites(product);
-  }
+  };
 
   return (
     <FlatList
+      ref={listRef}
       horizontal
       bounces={true}
       showsHorizontalScrollIndicator={false}
-      contentContainerStyle={{ gap: 10 }}
+      contentContainerStyle={{ gap: 10, flexGrow: 1 }}
       data={filteredProducts}
       keyExtractor={(item) => item.id.toString()}
       renderItem={({ item }) => (
@@ -97,7 +112,7 @@ export default function Products() {
             className="w-10 h-10 rounded-full flex items-center justify-center bg-white absolute top-2 right-2 shadow"
           >
             {item.isFavorite ? (
-              <HeartIcon size={22} color={"green"} />             
+              <HeartIcon size={22} color={"green"} />
             ) : (
               <FontAwesome6 name="heart" size={18} color={"green"} />
             )}
@@ -105,7 +120,7 @@ export default function Products() {
         </TouchableOpacity>
       )}
       ListEmptyComponent={() => (
-        <View className="flex-1 items-center justify-center bg-amber-200">
+        <View className="flex-1 items-center justify-center w-full">
           <Text className="text-gray-500 text-center">
             No products available
           </Text>

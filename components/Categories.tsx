@@ -4,8 +4,15 @@ import React, { useContext } from 'react';
 import { FlatList, Image, Text, TouchableOpacity, View } from 'react-native';
 
 export default function Categories() {
-  const {activeCategory, setActiveCategory} = useContext(AppContext);
+  const {activeCategory, setActiveCategory, listRef} = useContext(AppContext);
 
+  const handleSetActiveCategory = (category:string) => {
+    listRef.current?.scrollToOffset({
+      animated: true,
+      offset: 0,
+    })
+    setActiveCategory(category);
+  }
   return (
     <FlatList
       data={categories}
@@ -15,7 +22,7 @@ export default function Categories() {
         return (
           <TouchableOpacity
             key={index.toString()}
-            onPress={() => setActiveCategory(item.title)}
+            onPress={() => handleSetActiveCategory(item.title)}
             className={
               "flex-col items-center justify-center px-3gg py-1 rounded-full"
             }

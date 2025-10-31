@@ -11,18 +11,18 @@ export default function TabsLayout() {
   const {cart} = useContext(AppContext);
    const segments = useSegments();
 
-  // Assuming 'routeToHideTab' is the name of the screen where you want to hide the tab bar
+  // Hiding the bottom tabBar for the cart page
   const isTabHidden = segments[segments.length - 1] === 'cart';
 
   return (
     <Tabs
       screenOptions={{
         tabBarStyle: {
-          paddingVertical: 10,
-          height: 110,
+          // paddingVertical: 10,
+          // height: 90,
           display: isTabHidden ? "none" : "flex",
         },
-        tabBarItemStyle: { paddingTop: 10 },
+        // tabBarItemStyle: { paddingTop: 5 },
         tabBarActiveTintColor: "#43B658",
         tabBarInactiveTintColor: "gray",
         headerShown: false,
